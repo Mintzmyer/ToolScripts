@@ -1,5 +1,5 @@
 #!/bin/bash
-defaultDir=~/builds/rosen_jb_4.2.2_1.1.0-sw/
+defaultDir=~/
 altDir1=~/
 altDir2=~/
 altDir3=~/
