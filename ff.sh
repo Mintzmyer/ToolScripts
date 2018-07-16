@@ -41,14 +41,17 @@ fi
 
 sudo date
 
+    # Build fresh boot and system images #
 echo "Using build at $buildDir"
 if [ $make -eq 1 ]; then
     build=$(make -C $buildDir installclean | grep "TARGET_PRODUCT=" | cut -d"=" -f 2)
-    make -C $buildDir -j7
+    make -C $buildDir -j7 || exit 1
 else
     build=$(make -C $buildDir --question | grep "TARGET_PRODUCT=" | cut -d"=" -f 2)
     echo "Skipping make"    
 fi
+
+    # Flash fresh boot and system images #
 if [ $flash -eq 1 ]; then
     /bin/bash ~/otg.sh -r
     sleep .5
