@@ -21,10 +21,10 @@ if [ "$#" -ge 1 ]; then
 fi
 
 {
-    echo "echo 1 > sys/class/gpio/gpio258/value"
+    echo "echo 1 > /sys/class/gpio/gpio258/value"
     echo "mount -o remount, rw /system"
         # Key sequence to quit Minicom #
-} | sudo minicom -w -D /dev/ttyUSB0
+} | sudo minicom -w -D /dev/ttyUSB0 > /dev/null 2>&1
 sleep 3
 
     # Launch an adb shell #
