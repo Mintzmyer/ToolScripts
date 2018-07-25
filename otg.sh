@@ -41,7 +41,7 @@ elif [ $reboot -ne 0 ]; then
         {
             echo "stop autoboot"
             echo "fastboot q"
-        } | sudo minicom -w -D /dev/ttyUSB0
+        } | sudo minicom -w -D /dev/ttyUSB0 > /dev/null 2>&1
     fi
     sleep 1
 fi
