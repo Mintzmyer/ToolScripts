@@ -14,28 +14,6 @@
 # Default number of previous commands
 histNum=11
 
-# Command Line Interface
-argNum=$#
-if [ "$argNum" -ge 1 ]; then
-    echo "Usage: source ~/uparrow.sh [-s [#]]"
-    echo "Quickly automate recently used commands for fast repetition"
-    arg1=$1
-    if [ "$arg1" = "-h" ]; then
-        echo "    -s    Select a subset from the 11 most recent commands"
-        echo "    -s #  Select a subset from the # most recent commands"
-        echo "    -h    Shows this help message"
-        echo "    Note: It's critical to run using source or a preceding '.'"
-        echo "          to gather history from current shell"
-    elif [ "$arg1" = "-s" ]; then
-        if [ "$argNum" -ge 2 ]; then
-            histNum=$2
-        fi
-        setup
-    fi
-else
-    auto
-fi
-
 # Allows the user to select a subset of commands from recent history to hotkey
 setup(){
     recentCMDS=()
@@ -63,3 +41,25 @@ auto(){
         ${recentCMDS[((cmd-1)*3)+1]}
     done
 }
+
+# Command Line Interface
+argNum=$#
+if [ "$argNum" -ge 1 ]; then
+    echo "Usage: $ source ~/uparrow.sh [-s [#]]"
+    echo "Quickly automate recently used commands for fast repetition"
+    arg1=$1
+    if [ "$arg1" = "-h" ]; then
+        echo "    -s    Select a subset from the 11 most recent commands"
+        echo "    -s #  Select a subset from the # most recent commands"
+        echo "    -h    Shows this help message"
+        echo "    Note: It's critical to use source or a preceding '.'"
+        echo "          to gather history from current shell"
+    elif [ "$arg1" = "-s" ]; then
+        if [ "$argNum" -ge 2 ]; then
+            histNum=$2
+        fi
+        setup
+    fi
+else
+    auto
+fi
