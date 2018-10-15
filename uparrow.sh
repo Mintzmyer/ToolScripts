@@ -36,8 +36,13 @@ setup(){
 auto(){
     for cmd in $CMDS
     do
-        read -n 1 -s -r -p "${recentCMDS[((cmd-1)*3)+1]}"
+        read -n 1 -s -r -p "${recentCMDS[((cmd-1)*3)+1]} or press [r] to repeat prev"
         echo ""
+	while [[ "$REPLY" =~ ^[Rr]$ ]]; do
+            ${recentCMDS[((cmd-2)*3)+1]}
+            read -n 1 -s -r -p "${recentCMDS[((cmd-1)*3)+1]} or press [r] to repeat prev"
+            echo ""
+	done
         ${recentCMDS[((cmd-1)*3)+1]}
     done
 }
