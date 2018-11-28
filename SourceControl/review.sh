@@ -1,6 +1,29 @@
 #!/bin/bash
+
+# This script is intended to review and commit changes to large projects
+#     which have multiple git repositories, and a particular feature or fix
+#     might touch multiple parts of the source code
+#
+# It helps users leverage version control tools like reviewing all changes
+#     and commit multiple related changesets in separate repos
+#
+# It gives a birds-eye view of changes and prevents partial checkins
+#
+
 prefix="modified:   "
 
+## Function to get char+enter from user and return char  ##
+getBtnPress(){
+    if [[ $# -lt 1 ]]; then
+         prompt="Make a selection?"
+    else
+         prompt=$1
+    fi
+    read -p "$prompt" -n 2 -r REPLY </dev/tty
+    echo -n $REPLY
+}
+
+## Function to find editor, I prefer BeyondCompare ##
 chooseEditor(){
     if [[ $(command -v bcommand) ]]; then
         # Use ripgrep if available
@@ -10,9 +33,10 @@ chooseEditor(){
     fi
 }
 
+## Function to print all modified/deleted/new files in a repository ##
 echoFiles(){
     echo "  ~~~  Tracked files:  ~~~  "
-    for file in $(git -C "$repo" ls-files); do
+    for file in $(git -C "$repo" ls-files -m -d); do
         echo "   -$file"
     done
     echo "  ~~~  Untracked files:  ~~~  "
@@ -21,6 +45,7 @@ echoFiles(){
     done
 }
 
+## Function to review modified files with difftool or new files ##
 reviewFiles(){
     echo ""
     echo " ~> Tracked files:"
@@ -31,7 +56,7 @@ reviewFiles(){
     echo ""
     for file in $(git -C "$repo" ls-files -o); do
         echo "Viewing: '$file'"
-        read -p "Launch '$editor' Y/n?: " -n 1 -r REPLY </dev/tty
+        REPLY=$(getBtnPress "Launch '$editor' Y/n?: ")
         if [[ $REPLY =~ ^[Yy]$ ]]; then
             $editor "$file"
         fi
@@ -39,35 +64,53 @@ reviewFiles(){
     done
 }
 
+## Function to add/stage modified/deleted/new files for commit ##
 addFiles(){
-    echo "Tracked files:"
-    for file in $(git -C "$repo" ls-files); do
-        read -p "`echo $'\n > '`Add $file? Y/n: " -n 1 -r REPLY </dev/tty
-        if [[ $REPLY =~ ^[Yy]$ ]]; then
-            git -C "$repo" add "$file"
-        fi
-    done
-    echo "Untracked files:"
-    for file in $(git -C "$repo" ls-files -o); do
-        read -p "`echo $'\n > '`Add $file? Y/n: " -n 1 -r REPLY </dev/tty
+    echo ""
+    # Show modified, deleted, and untracked files
+    for file in $(git -C "$repo" ls-files -m -d -o); do
+        REPLY=$(getBtnPress "Add $file? Y/n: ")
         if [[ $REPLY =~ ^[Yy]$ ]]; then
             git -C "$repo" add "$file"
         fi
     done
 }
 
+## Function to commit changeset ##
 commitChanges(){
-    echo "# New commit or amend?"
+    cmd="git -C "$repo" commit "
+
+    # Fresh commit or --amend?"
+    REPLY=$(getBtnPress "Would you like to start a fresh commit or --amend? f/a: ")
+    if [[ $REPLY =~ ^[Aa]$ ]]; then
+        cmd="$cmd --amend"
+    fi
+    $cmd
 }
 
+## Function to upload commit using repo upload or git review ##
 uploadCommit(){
     echo "# Repo upload or git review?"
+    # Repo Upload or git review?"
+    REPLY=$(getBtnPress "Use repo upload or git review? r/g: ")
+    if [[ $REPLY =~ ^[Rr]$ ]]; then
+	repo upload $repo
+    elif [[ $REPLY =~ ^[Gg]$ ]]; then
+	git -C "$repo" review
+    fi
 }
 
 main(){
     # Find all repos that contain changes #
     for repo in $(find "$path" -name "*.git"); do
+	# Remove last 4 chars: Path should look like .../parentDir/childDir/.git
         repo=${repo::-4}
+
+	# Verify string ends in a dir: Otherwise .repo/projectName.git causes trouble
+	if [ ${repo: -1} != "/" ]; then
+            continue
+	fi
+
         diff=$(git -C "$repo" status | grep "Changes")
 
         # If repo contains changes #
@@ -77,31 +120,30 @@ main(){
             # ~~~ Review ~~~ #
             if [ "$review" -eq 1 ]; then
                 # Ask user to review files #
-                read -p "`echo $'\n > '`Review files in $repo? Y/n: " -n 1 -r REPLY </dev/tty
+		REPLY=$(getBtnPress "Review files in $repo? Y/n/s(kip): ")
                 if [[ $REPLY =~ ^[Yy]$ ]]; then
                     reviewFiles
+                elif [[ $REPLY =~ ^[Ss]$ ]]; then
+                    continue
                 fi
             fi
 
             # ~~~ Commit ~~~ #
             if [ "$commit" -eq 1 ]; then
 		# Ask user to stage files
-                read -p "`echo $'\n > '`Stage changes in $repo? Y/n: " -n 1 -r REPLY </dev/tty
+		REPLY=$(getBtnPress "Stage changes in $repo? Y/n: ")
 	        if [[ $REPLY =~ ^[Yy]$ ]]; then
-		    echo "Add files"
-                    #addFiles
+                    addFiles
                 fi
 		# Ask user to commit files
-                read -p "`echo $'\n > '`Commit changes in $repo? Y/n: " -n 1 -r REPLY </dev/tty
+		REPLY=$(getBtnPress "Commit changes in $repo? Y/n: ")
 	        if [[ $REPLY =~ ^[Yy]$ ]]; then
-		    echo "Commit files"
-                    #commitChanges
+                    commitChanges
                 fi
 		# Ask user to upload commit
-                read -p "`echo $'\n > '`Upload commit in $repo? Y/n: " -n 1 -r REPLY </dev/tty
+		REPLY=$(getBtnPress "Upload commit in $repo? Y/n: ")
 	        if [[ $REPLY =~ ^[Yy]$ ]]; then
-		    echo "Upload commit"
-                    #uploadCommit
+                    uploadCommit
                 fi
 
             fi
