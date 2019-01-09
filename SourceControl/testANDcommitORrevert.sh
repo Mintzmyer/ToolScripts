@@ -8,7 +8,7 @@
 # 'Test && Commit || Revert' is a workflow that seeks to 1up "Limbo On The Cheap"s
 #     'Test && Commit' by strongly encouraging programmers to make as small,
 #     incremental changes as possible...because if their tests fail their changes
-#     are reverted and lost
+#     are reverted and lost. This reduces Sunk Cost Fallacy waste.
 #
 # This script's intention is to make a generic impelementation of the workflow
 #     so that it's all ready to experiment with when I have the opportune project
@@ -17,19 +17,21 @@
 # The location of the source code, excluding the test code
 sourceLocation="/path/to/source/location/dir/"
 
-# Compile the source code
+# Compile the source code and report the result
 buildFn(){
     echo "Building";
-    exit 0; # Simulate successful build
+    # Add code to build source
+    return $?; # Pass on build result
 }
 
-# Execute tests and report the status
+# Execute tests and report the results
 testFn(){
     echo "Testing";
-    exit 0; # Simulate successful test
+    # Add call to execute tests
+    return $?; # Pass on test results
 }
 
-# Commit the changes
+# Commit the changes, write a brief commit message (opted against auto-msg)
 commitFn(){
     echo "Commit!"
     # git commit -a
