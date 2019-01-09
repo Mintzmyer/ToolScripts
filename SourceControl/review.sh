@@ -49,7 +49,7 @@ echoFiles(){
 reviewFiles(){
     echo ""
     echo " ~> Tracked files:"
-    for file in $(git -C "$repo" ls-files); do
+    for file in $(git -C "$repo" ls-files -m -d); do
         git -C "$repo" difftool "$file"
     done
     echo " ~> Untracked files:"
