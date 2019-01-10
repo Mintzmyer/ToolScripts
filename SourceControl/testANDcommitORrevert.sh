@@ -49,6 +49,7 @@ revertFn(){
 }
 
 echo "    ----    build && ( test && commit || revert )    ----";
+echo "";
 
 if buildFn; then
     if testFn; then
@@ -57,3 +58,8 @@ if buildFn; then
         revertFn;
     fi
 fi
+
+echo "";
+echo "    Test Driven Development Laws, Refactored";
+echo "        1) Write only enough of a unit test to fail";
+echo "        2) Write only enough production code to make a failing unit test pass";
