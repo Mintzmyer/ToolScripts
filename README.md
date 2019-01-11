@@ -10,9 +10,10 @@ Brief documentation explaining their intention and useage is included with each 
 - uparrow.sh      - "Hotkey" a set of commands on-the-fly, skip ctrl-Ring/up arrowing
 
 ## SourceControl - Scripts that improve management of source code
-- Plus2.sh        - Cheeky script that reviews auto-generated branches
-- review.sh       - Manages review/commits when a chance involves multiple repos
-- rmSpace.sh      - Formats space out of file/directory names recursively
-- save.sh         - Saves off a progress checkpoint in all repos, can leave stashed
-- sedsdead.sh     - Propogates naming/format change through dirs/files/file contents
-- sync.sh         - Syncs all git repos and AOSP builds to keep remote up-to-date
+- Plus2.sh                  - Cheeky script that reviews auto-generated branches
+- review.sh                 - Manages review/commits when a chance involves multiple repos
+- rmSpace.sh                - Formats space out of file/directory names recursively
+- save.sh                   - Saves off a progress checkpoint in all repos, can leave stashed
+- sedsdead.sh               - Propogates naming/format change through dirs/files/file contents
+- sync.sh                   - Syncs all git repos and AOSP builds to keep remote up-to-date
+- testANDcommitORrevert.sh  - Implements TDD scaffolding that commits or reverts on testing
