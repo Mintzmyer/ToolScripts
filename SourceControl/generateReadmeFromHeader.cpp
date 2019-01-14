@@ -22,6 +22,10 @@
 
 using namespace std;
 
+/* Searches a string for a substring and, if found
+ *  removes all instances of it. Then returns the
+ *  newly altered string
+ */
 string removeAllSubstr(string str, string substr) {
     size_t pos = string::npos;
 
@@ -62,28 +66,28 @@ string extractHeader(string fileRaw){
     
     // Find header comment block based on file type
     if (fileExt.compare(".sh") == 0) {
-	    startSymbol = "#!/bin/bash\n";
-	    endSymbol = "\n\n";
-            startLoc = fileContents.find_first_not_of(startSymbol);
-            endLoc = fileContents.find(endSymbol);
-            fileContents.erase(endLoc, string::npos);
-            fileContents.erase(0, startLoc);
-	    fileContents = removeAllSubstr(fileContents, "#");
+        startSymbol = "#!/bin/bash\n";
+        endSymbol = "\n\n";
+        startLoc = fileContents.find_first_not_of(startSymbol);
+        endLoc = fileContents.find(endSymbol);
+        fileContents.erase(endLoc, string::npos);
+        fileContents.erase(0, startLoc);
+        fileContents = removeAllSubstr(fileContents, "#");
     } else if ((fileExt.compare(".h") == 0) 
-		    || (fileExt.compare(".c") == 0)
-		    || (fileExt.compare(".cpp") == 0)) {
-	    startSymbol = "/*";
-	    endSymbol = "*/";
-            endLoc = fileContents.find(endSymbol);
-            startLoc = fileContents.find(startSymbol);
-            fileContents.erase(0, startLoc);
-            fileContents.erase(endLoc+2, string::npos);
-	    fileContents = removeAllSubstr(fileContents, "/*");
-	    fileContents = removeAllSubstr(fileContents, "*/");
-	    fileContents = removeAllSubstr(fileContents, "*");
+            || (fileExt.compare(".c") == 0)
+            || (fileExt.compare(".cpp") == 0)) {
+        startSymbol = "/*";
+        endSymbol = "*/";
+        endLoc = fileContents.find(endSymbol);
+        startLoc = fileContents.find(startSymbol);
+        fileContents.erase(0, startLoc);
+        fileContents.erase(endLoc+2, string::npos);
+        fileContents = removeAllSubstr(fileContents, "/*");
+        fileContents = removeAllSubstr(fileContents, "*/");
+        fileContents = removeAllSubstr(fileContents, "*");
     } else {
-            cout << fileRaw << " Error: cannot tell how comments are delineated\n"
-		    "from code based on the file extension\n";
+        cout << fileRaw << " Error: cannot tell how comments are delineated\n"
+                            "from code based on the file extension\n";
     }
     return fileContents;
 }
@@ -124,18 +128,21 @@ void prepReadMeFile(){
     writeToReadMe(editableReadMe, false);
 }
 
+/* Encapsulates the main logic flow for updating
+ *  the README
+ */
 void updateReadMe(string fileRaw) {
     if (isFileValid(fileRaw)) {
         // Extract file header comments
         string header = extractHeader(fileRaw);
         header.append("\n");
-	// Compose new file section
-	string fileSection = "### ";
-	fileSection.append(fileRaw);
+        // Compose new file section
+        string fileSection = "### ";
+        fileSection.append(fileRaw);
         fileSection.append("\n");
-	// Write new file section and comments
-	writeToReadMe(fileSection, true);
-	writeToReadMe(header, true);
+        // Write new file section and comments
+        writeToReadMe(fileSection, true);
+        writeToReadMe(header, true);
     } else {
         cout << "Ignoring "<<fileRaw<<": Invalid file\n";
     }
@@ -148,7 +155,7 @@ int main(int argc, char *argv[]){
     } else {
         string directory = argv[1];
         string file = argv[2];
-	updateReadMe(file);
+        updateReadMe(file);
     }
     return 0;
 }
