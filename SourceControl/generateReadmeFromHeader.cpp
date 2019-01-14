@@ -37,12 +37,10 @@ string removeAllSubstr(string str, string substr) {
 bool isFileValid(string fileRaw){
     // Don't recursively add README's documentation to README
     if (fileRaw.compare("README.md") == 0) {
-        cout << fileRaw << " Found readme\n";
         return false;
     }
     auto const posSlash=fileRaw.find_last_of('/');
     const auto fileName=fileRaw.substr(posSlash+1);
-    //cout << fileName << "\n";
     const auto posDot=fileName.find_last_of('.');
     return (posDot != std::string::npos);
 }
@@ -59,25 +57,21 @@ string extractHeader(string fileRaw){
     const auto posDot=fileRaw.find_last_of('.');
     const auto fileExt=fileRaw.substr(posDot);
 
-    //cout << fileExt << " In extractHeader:\n";
     string startSymbol, endSymbol;
     size_t startLoc, endLoc;
     
     // Find header comment block based on file type
     if (fileExt.compare(".sh") == 0) {
-            cout << "sh\n";
 	    startSymbol = "#!/bin/bash\n";
 	    endSymbol = "\n\n";
             startLoc = fileContents.find_first_not_of(startSymbol);
             endLoc = fileContents.find(endSymbol);
             fileContents.erase(endLoc, string::npos);
             fileContents.erase(0, startLoc);
-            //fileContents.erase(remove(fileContents.begin(), fileContents.end(), '#'), fileContents.end());
 	    fileContents = removeAllSubstr(fileContents, "#");
     } else if ((fileExt.compare(".h") == 0) 
 		    || (fileExt.compare(".c") == 0)
 		    || (fileExt.compare(".cpp") == 0)) {
-            cout << "c or cpp or h\n";
 	    startSymbol = "/*";
 	    endSymbol = "*/";
             endLoc = fileContents.find(endSymbol);
@@ -87,15 +81,15 @@ string extractHeader(string fileRaw){
 	    fileContents = removeAllSubstr(fileContents, "/*");
 	    fileContents = removeAllSubstr(fileContents, "*/");
 	    fileContents = removeAllSubstr(fileContents, "*");
-            //fileContents.erase(remove(fileContents.begin(), fileContents.end(), '*'), fileContents.end());
     } else {
-            cout << "Default\n";
+            cout << fileRaw << " Error: cannot tell how comments are delineated\n"
+		    "from code based on the file extension\n";
     }
-    cout << "Start: "<<startLoc<<" End: "<<endLoc<<"\n";
     return fileContents;
 }
 
 /* Writes to README.md
+ * If append is true, appends. Otherwise, overwrites
  */
 void writeToReadMe(string comment, bool append){
     ofstream wReadMeFile;
@@ -132,33 +126,28 @@ void prepReadMeFile(){
 
 void updateReadMe(string fileRaw) {
     if (isFileValid(fileRaw)) {
-        // Extract file
+        // Extract file header comments
         string header = extractHeader(fileRaw);
         header.append("\n");
+	// Compose new file section
 	string fileSection = "### ";
 	fileSection.append(fileRaw);
         fileSection.append("\n");
-	cout << fileSection;
-	cout << header;
+	// Write new file section and comments
 	writeToReadMe(fileSection, true);
 	writeToReadMe(header, true);
-        
     } else {
-        cout << "Invalid\n";
+        cout << "Ignoring "<<fileRaw<<": Invalid file\n";
     }
 }
 
 int main(int argc, char *argv[]){
-
     // Remove all auto-gen documentation only once
     if (argc == 1) {
-        cout << "It's the edit readme file\n";
         prepReadMeFile();
     } else {
         string directory = argv[1];
-        //cout << directory << "\n";
         string file = argv[2];
-        //cout << file << "\n";
 	updateReadMe(file);
     }
     return 0;
