@@ -1,4 +1,10 @@
 #!/bin/bash
+#
+# This script automates renaming files. Sometimes, there's
+#     a bunch of files with spaces or other annoying chars
+#     and this script can be easily updated to pull out
+#     spaces and other unseemly naming conventions
+#
 
     # Set Internal Field Separator to '\n' linebreak #
 IFS='

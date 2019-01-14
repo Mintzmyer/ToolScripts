@@ -9,7 +9,7 @@
 #     a small practical joke, I wrote a script to approve any new branches
 #     within 3 seconds of being committed. We'll see how long it takes people
 #     to notice that I'm reviewing new branches faster than humanly realistic
-#
+
 # Here, my ~/.ssh/config file looks something like:
 # Host gerrit
 #   Hostname <gerrit_url>

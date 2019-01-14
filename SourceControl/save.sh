@@ -1,4 +1,12 @@
 #!/bin/bash
+#
+# This script automates the process of stashing changes,
+#     essentially creating a checkpoint throughout the
+#     multiple repos a change might touch. This allows
+#     for easier mobility and "save points" between 
+#     sections of work.
+
+
 saveMsg=" Checkpoint @ $(date)"
 q='"'
 

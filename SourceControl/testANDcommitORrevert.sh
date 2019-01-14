@@ -1,5 +1,5 @@
 #!/bin/bash
-
+#
 # This script implements an idea by Oddmund Strømmer, 
 #     and popularized by Kent Beck, described here:
 #     https://medium.com/@kentbeck_7670/test-commit-revert-870bbd756864

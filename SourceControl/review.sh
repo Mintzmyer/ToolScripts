@@ -1,5 +1,5 @@
 #!/bin/bash
-
+#
 # This script is intended to review and commit changes to large projects
 #     which have multiple git repositories, and a particular feature or fix
 #     might touch multiple parts of the source code

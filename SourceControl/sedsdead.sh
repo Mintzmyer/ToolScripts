@@ -1,5 +1,5 @@
 #!/bin/bash
-
+#
 # This script is intended to perform a recursive search and replace
 #     for files and directories, and/or file contents much like 
 #     vim's (sed) %s/search/replace/gc for a single file

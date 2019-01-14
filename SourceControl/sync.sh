@@ -1,4 +1,11 @@
 #!/bin/bash
+#
+# This script automates the sync functionality, making it
+#     easier to stay up to date with everyone's changes,
+#     even if they touch source that you're not currently
+#     working on or even thinking about.
+#
+
 defaultDir=~/
 altDir1=~/
 altDir2=~/
