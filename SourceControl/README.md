@@ -2,8 +2,10 @@
 
 This directory contains scripts that help to improve
 workflows, automate tasks, and improve work quality
-as it pertains to various elements of source control,
-large repositories of source code, and git.
+as it pertains to:
+- Various elements of source control
+- Manipulating large repositories of source code
+- Leveraging Git, TDD and TCR workflows
 
 They were mostly created in response to an area I
 sought to optimize, and many earned coveted points

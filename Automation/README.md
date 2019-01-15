@@ -2,8 +2,10 @@
 
 This directory contains scripts that help to improve
 workflows, automate tasks, and improve work quality
-as it pertains to device reprogramming, physical
-testing, and repetitive execution of commands
+as it pertains to:
+- Device reprogramming
+- Physical device testing
+- Repetitive execution of commands
 
 Though some are obsolete, they were created in response
 to an area I sought to optimize, and many earned coveted
