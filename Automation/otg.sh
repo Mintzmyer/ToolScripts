@@ -1,4 +1,13 @@
 #!/bin/bash
+#
+# This script enters a device into 'On The Go' mode
+# allowing adb to connect to it, and expanding the
+# functionality significantly. Though it served a
+# purpose, this script too is quite obsolete, in 
+# particular the minicom should be replaced with
+# directly accessing the serial ports as in RebootTester. 
+#
+
 minicom=$(ps cax | grep minicom)
 launchShell=0
 reboot=0

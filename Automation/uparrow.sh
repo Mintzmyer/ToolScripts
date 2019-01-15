@@ -1,5 +1,5 @@
 #!/bin/bash
-
+#
 # This script is intended to rapidly automate a process on-the-fly
 #     by letting the user select from recent command history and
 #     then run that subset of commands repeatedly

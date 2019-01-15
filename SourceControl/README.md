@@ -14,7 +14,7 @@ as 'Quick and Easy Kaizens'
  This file updates a README.md file with the header
   block comments of the files it is fed. 
  
-  Calling it with no arguements erases the README.md file
+  Calling it with just a directory erases the README.md file
   after a tag marking the auto-generated portion 
   (allowing for static overarching directory comments
   to remain untouched)

@@ -1,5 +1,5 @@
 #!/bin/bash
-
+#
 # This script is intended to automate testing of an Android device's boot 
 #     process by observing the print statements from the start up sequence
 #     

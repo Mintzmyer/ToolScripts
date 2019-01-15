@@ -1,4 +1,10 @@
 #!/bin/bash
+#
+# A way to streamline fastboot when flashing images to an
+# embedded linux/Android device. Mostly obsolete, but useful
+# at the time. Should either be updated or removed. 
+#
+
 defaultDir=~/
 altDir1=~/
 altDir2=~/
