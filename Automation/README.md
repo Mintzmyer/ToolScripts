@@ -12,19 +12,16 @@ to an area I sought to optimize, and many earned coveted
 points as 'Quick and Easy Kaizens'
 
 ###### Auto-Generated Documentation
-### ff.sh
- A way to streamline fastboot when flashing images to an
- embedded linux/Android device. Mostly obsolete, but useful
- at the time. Should either be updated or removed. 
+### Plus2.sh
+ When software engineer coworkers create a new build for testing or release
+     a script auto-generates a new branch for that build. It is checked into
+     Gerrit, where all commits are reviewed before merged on consensus. 
 
-### otg.sh
- This script enters a device into 'On The Go' mode
- allowing adb to connect to it, and expanding the
- functionality significantly. Though it served a
- purpose, this script too is quite obsolete, in 
- particular the minicom should be replaced with
- directly accessing the serial ports as in RebootTester. 
-
+ Because all branches are auto-generated, they don't really need to be peer
+     reviewed. To learn about the Gerrit command line interface, and to play
+     a small practical joke, I wrote a script to approve any new branches
+     within 3 seconds of being committed. We'll see how long it takes people
+     to notice that I'm reviewing new branches faster than humanly realistic
 ### RebootTester.sh
  This script is intended to automate testing of an Android device's boot 
      process by observing the print statements from the start up sequence
@@ -37,6 +34,13 @@ points as 'Quick and Easy Kaizens'
 
  This script is written to be light-weight and modifiable, rather than
      covering all or many of the use cases with fleshed out flag options
+### sedsdead.sh
+ This script is intended to perform a recursive search and replace
+     for files and directories, and/or file contents much like 
+     vim's (sed) %s/search/replace/gc for a single file
+ 
+ This is useful in large projects when a naming convention or
+     new standard needs to be implemented across the board
 ### uparrow.sh
  This script is intended to rapidly automate a process on-the-fly
      by letting the user select from recent command history and

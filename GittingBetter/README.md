@@ -1,4 +1,4 @@
-# SourceControl
+# GittingBetter
 
 This directory contains scripts that help to improve
 workflows, automate tasks, and improve work quality
@@ -33,16 +33,6 @@ as 'Quick and Easy Kaizens'
  This script performs the linux/unix specific work
      of feeding files to the readmeGenerator
 
-### Plus2.sh
- When software engineer coworkers create a new build for testing or release
-     a script auto-generates a new branch for that build. It is checked into
-     Gerrit, where all commits are reviewed before merged on consensus. 
-
- Because all branches are auto-generated, they don't really need to be peer
-     reviewed. To learn about the Gerrit command line interface, and to play
-     a small practical joke, I wrote a script to approve any new branches
-     within 3 seconds of being committed. We'll see how long it takes people
-     to notice that I'm reviewing new branches faster than humanly realistic
 ### review.sh
  This script is intended to review and commit changes to large projects
      which have multiple git repositories, and a particular feature or fix
@@ -53,25 +43,12 @@ as 'Quick and Easy Kaizens'
 
  It gives a birds-eye view of changes and prevents partial checkins
 
-### rmSpace.sh
- This script automates renaming files. Sometimes, there's
-     a bunch of files with spaces or other annoying chars
-     and this script can be easily updated to pull out
-     spaces and other unseemly naming conventions
-
 ### save.sh
  This script automates the process of stashing changes,
      essentially creating a checkpoint throughout the
      multiple repos a change might touch. This allows
      for easier mobility and "save points" between 
      sections of work.
-### sedsdead.sh
- This script is intended to perform a recursive search and replace
-     for files and directories, and/or file contents much like 
-     vim's (sed) %s/search/replace/gc for a single file
- 
- This is useful in large projects when a naming convention or
-     new standard needs to be implemented across the board
 ### sync.sh
  This script automates the sync functionality, making it
      easier to stay up to date with everyone's changes,
