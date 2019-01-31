@@ -4,10 +4,11 @@ A variety of handy bash scripts written to automate (Android/embedded Linux) dev
 Brief documentation explaining their intention and useage is included with each script source.
 
 ## Automation    - Scripts that automate/streamline repetitive motion, including Gerrit
-- Plus2.sh        - Cheeky script that reviews auto-generated branches in Gerrit
-- RebootTester.sh - Cycles boot sequence, searching logcat for success/fail conditions
-- sedsdead.sh     - Propogates naming/format change through dirs/files/file contents
-- uparrow.sh      - "Hotkey" a set of commands on-the-fly, skip ctrl-Ring/up arrowing
+- Plus2.sh            - Cheeky script that reviews auto-generated branches in Gerrit
+- RebootTester.sh     - Cycles boot sequence, searching logcat for success/fail conditions
+- reviewChecklist.py  - Automatically adds inline comments to a Gerrit commit review
+- sedsdead.sh         - Propogates naming/format change through dirs/files/file contents
+- uparrow.sh          - "Hotkey" a set of commands on-the-fly, skip ctrl-Ring/up arrowing
 
 ## GittingBetter - Scripts that leverage Git to improve workflows
 - generateReadmeFromHeader.cpp  - Takes file, extracts header comment, prints to README

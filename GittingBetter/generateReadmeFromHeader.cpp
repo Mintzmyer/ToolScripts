@@ -89,12 +89,12 @@ string extractHeader(string fileRaw){
     size_t startLoc, endLoc;
     
     // Find header comment block based on file type
-    if (fileExt.compare(".sh") == 0) {
-        startSymbol = "#!/bin/bash\n";
+    if ((fileExt.compare(".sh") == 0) || (fileExt.compare(".py") == 0)) {
+        startSymbol = "\n# ";
         endSymbol = "\n\n";
 
 	// Cut comment to size
-        startLoc = fileContents.find_first_not_of(startSymbol);
+        startLoc = fileContents.find(startSymbol);
         endLoc = fileContents.find(endSymbol);
         fileContents.erase(endLoc, string::npos);
         fileContents.erase(0, startLoc);
