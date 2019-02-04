@@ -1,0 +1,12 @@
+Commit message references requirements and testing note
+Code contains unit tests, logging, and switch/flag for verbose debug stmts
+Everything compiles and all tests pass, including no BIT errors (Update BIT)
+Function blocks are commented, with additional comments where needed
+Replace all Magic Numbers with named constants
+Code is broken into functions by logic functionality, and not repeated
+Functionality common to multiple programs is wrapped into a library
+Check inputs for validity, pay attention to uninitialized values and null pointers
+Exception handling should do something useful/appropriate, not just ignore it
+Check logic errors on control flow, and terminal conditions are sensible
+Avoid while(1) loops unless in a daemon/service, be mindful of busy-waiting/spinlocks
+Consider environment and context; network status, SDI/HDMI inputs, ARINC data, etc
