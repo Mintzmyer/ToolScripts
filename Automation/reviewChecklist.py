@@ -23,7 +23,7 @@ from pygerrit2 import GerritRestAPI, HTTPBasicAuth, GerritReview
 import os
 import time
 
-DEBUG = True
+DEBUG = False
 
 def vprint(output):
     if DEBUG:
@@ -34,9 +34,11 @@ class ChecklistGenerator:
 
     def __init__(self, checklistFile):
         # Get Review Guidelines checklist
-        guideFilepath = os.path.expanduser(checklistFile)
+        scriptPath = os.path.dirname(os.path.abspath( __file__ ))
+        guideFilepath = os.path.expanduser(scriptPath+"/"+checklistFile)
         if os.path.isfile(guideFilepath) == False:
             print("Error: No checklist file named <"+checklistFile+"> found")
+            vprint(scriptPath)
             quit()
 
         with open(guideFilepath, 'r') as guideFile:
@@ -68,9 +70,11 @@ class RestAPI:
 
     def __init__(self, credentialsFile, gerritUrl):
         # Get Login Authentication information
-        authFilepath = os.path.expanduser(credentialsFile)
+        scriptPath = os.path.dirname(os.path.abspath( __file__ ))
+        authFilepath = os.path.expanduser(scriptPath + "/" + credentialsFile)
         if os.path.isfile(authFilepath) == False:
             print("Error: No authentication file named "+credentialsFile+" found")
+            vprint(scriptPath)
             quit()
     
         with open(authFilepath, 'r') as loginFile:
@@ -91,11 +95,6 @@ class RestAPI:
         result = self.rest.get(query, headers={'Content-Type': 'application/json'})
         return result
 
-    # Wrapper for GerritRestAPI's POST method
-    def post(self, query, jsonArgs):
-        result = self.rest.post(query, json={**jsonArgs}) 
-        return result
-
     # Wrapper for GerritRestAPI's review method
     def review(self, changeID, revision, review):
         result = self.rest.review(changeID, revision, review)
@@ -107,11 +106,16 @@ class GerritDaemon:
     def __init__(self, rest, gerritReview):
         self.rest = rest
         self.review = gerritReview
+        # Default behavior is to only add Review Checklist to
+        # new commits, not each new patch
         self.recommentNewPatches = False
 
+    # Set Daemon to append checklist to every new patch (True) or
+    #     just once at the initial commit (False, default)
     def checklistEveryPatch(self, TorF):
         self.recommentNewPatches = TorF
 
+    # Daemon to seek new commits, and add Review Checklist comment
     def checklistDaemon(self):
         while True:
             newCommits = self.findNewCommits()
@@ -119,6 +123,7 @@ class GerritDaemon:
                 self.addChecklist(commit)
             time.sleep(3)
 
+    # Finds all open commits and calls isUncommented to check for newness
     def findNewCommits(self):
         getOpenCommits = "/changes/?q=status:open"
         openCommits = self.rest.get(getOpenCommits)
@@ -133,9 +138,12 @@ class GerritDaemon:
             vprint("==============================")
         return newCommits
 
+    # Checks if the commit has comments or is brand new
     def isUncommented(self, changeID):
+        # Checks if the current patch has any comments
         if self.recommentNewPatches:
             getComments = "/changes/"+changeID+"/revisions/current/comments"
+        # Checks if the entire commit has any comments
         else:
             getComments = "/changes/"+changeID+"/comments"
 
@@ -143,17 +151,21 @@ class GerritDaemon:
         vprint(not allComments)
         return not allComments
 
-
+    # Adds Review Checklist to the commit with given ID
     def addChecklist(self, commitID):
         result = self.rest.review(commitID, self.review)
         vprint(result)
 
 
-# Main method
+### Main method ###
+
+# Open the Review Checklist and load it into a Gerrit Review class object
 checklist = ChecklistGenerator('reviewChecklist.txt')
 
+# Connect to Gerrit via the Gerrit Rest API class
 connect = RestAPI('.credentials.txt', 'http://gerrit.rosenaviation.com:8080')
 
+# Initialize the Daemon with the Gerrit connection and the Review Checklist
 daemon = GerritDaemon(connect, checklist.getReview())
 
 
