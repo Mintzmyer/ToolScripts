@@ -19,10 +19,8 @@
 #     with OpenID and used the HTTP API authentication. *Face palm*
 # https://softwarefactory-project.io/docs/faqs/gerrit_rest_api.html
 
-from pygerrit2 import GerritRestAPI, HTTPBasicAuth
-from requests_oauthlib import OAuth2
+from pygerrit2 import GerritRestAPI, HTTPBasicAuth, GerritReview
 import os
-import json
 import time
 
 DEBUG = True
@@ -38,7 +36,7 @@ class ChecklistGenerator:
         # Get Review Guidelines checklist
         guideFilepath = os.path.expanduser(checklistFile)
         if os.path.isfile(guideFilepath) == False:
-            print("Error: No "+checklistFile+" file found")
+            print("Error: No checklist file named <"+checklistFile+"> found")
             quit()
 
         with open(guideFilepath, 'r') as guideFile:
@@ -48,47 +46,22 @@ class ChecklistGenerator:
                 checklist.append(line)
             self.checklist = checklist
 
-        self.getChecklistJSON(self.checklist)
+        self.review = GerritReview()
+        self.getChecklistComments(self.checklist)
 
-    # Converts it to JSON for the Gerrit REST API
-    def getChecklistJSON(self, checklist):
-        opening = '{\
-    "comments": {\
-      "/COMMIT_MSG": ['
-        closing = '      ]\
-    }\
-}'
-        jsonStr = opening
-        first = True
+    # Converts it to GerritReview for the Gerrit REST API
+    def getChecklistComments(self, checklist):
+        comments = []
         for check in checklist:
-            if first:
-                first = False
-                comment = '\
-        {\
-          "line": 0,\
-          "message": "'+check+'"\
-        }'
-            else:
-                comment = ',\
-        {\
-          "line": 0,\
-          "message": "'+check+'"\
-        }'
-            jsonStr += comment
-        jsonStr += closing
-        try:
-            json.loads(jsonStr)
-        except ValueError as error:
-            print("Error: Failed to generate valid JSON")
-            print(error)
-            vprint(jsonStr)
-            quit()
+            comment = {"filename": "/COMMIT_MSG", "line": 6}
+            comment["message"]=check
+            comments.append(comment)
+        self.review.add_comments(comments)
+        vprint(comments)
 
-        self.jsonChecklist = jsonStr
-
-    # Returns JSON of Review Checklist for posting as inline comments
-    def getJSON(self):
-        return self.jsonChecklist
+    # Returns GerritReview object of Review Checklist for posting as inline comments
+    def getReview(self):
+        return self.review
 
 ### Class to encompass connecting to and calling Gerrit's REST API ###
 class RestAPI:
@@ -115,20 +88,29 @@ class RestAPI:
 
     # Wrapper for GerritRestAPI's GET method
     def get(self, query):
-        result = self.rest.get(query)
+        result = self.rest.get(query, headers={'Content-Type': 'application/json'})
         return result
 
     # Wrapper for GerritRestAPI's POST method
     def post(self, query, jsonArgs):
-        result = self.rest.post(query, json=jsonArgs)
+        result = self.rest.post(query, json={**jsonArgs}) 
+        return result
+
+    # Wrapper for GerritRestAPI's review method
+    def review(self, changeID, revision, review):
+        result = self.rest.review(changeID, revision, review)
         return result
 
 ### Class to encapsulate Gerrit functionality pipelines ###
 class GerritDaemon:
 
-    def __init__(self, rest, jsonStr):
+    def __init__(self, rest, gerritReview):
         self.rest = rest
-        self.jsonStr = jsonStr
+        self.review = gerritReview
+        self.recommentNewPatches = False
+
+    def checklistEveryPatch(self, TorF):
+        self.recommentNewPatches = TorF
 
     def checklistDaemon(self):
         while True:
@@ -152,22 +134,19 @@ class GerritDaemon:
         return newCommits
 
     def isUncommented(self, changeID):
-        getAllComments = "/changes/"+changeID+"/comments"
-        allComments = self.rest.get(getAllComments)
+        if self.recommentNewPatches:
+            getComments = "/changes/"+changeID+"/revisions/current/comments"
+        else:
+            getComments = "/changes/"+changeID+"/comments"
+
+        allComments = self.rest.get(getComments)
         vprint(not allComments)
         return not allComments
 
 
     def addChecklist(self, commitID):
-        postChecklist = "/changes/" + str(commitID) + "/revisions/current/review"
-        vprint(postChecklist +" "+ self.jsonStr)
-        result = self.rest.post(postChecklist, self.jsonStr)
-
-    # Test to add inline comments to just one commit
-    def test(self):
-        newCommits = self.findNewCommits()
-        if newCommits:
-            self.addChecklist(newCommits[0])
+        result = self.rest.review(commitID, self.review)
+        vprint(result)
 
 
 # Main method
@@ -175,45 +154,10 @@ checklist = ChecklistGenerator('reviewChecklist.txt')
 
 connect = RestAPI('.credentials.txt', 'http://gerrit.rosenaviation.com:8080')
 
-daemon = GerritDaemon(connect, checklist.getJSON())
+daemon = GerritDaemon(connect, checklist.getReview())
 
-# Run test sparingly or you'll use up the available commits
-#daemon.test()
 
 # Run daemon to append checklist to new commits
+#daemon.checklistEveryPatch(False)
 #daemon.checklistDaemon()
 
-'''
-newCommits = findNewCommits()
-
-for commit in newCommits:
-    print(commit)
-    addChecklist(commit, reviewList)
-#vprint(parsedCommits)
-
-def listFiles(changeID):
-    getFiles = "/changes/"+changeID+"/revisions/current/files"
-    allFiles = rest.get(getFiles)
-    #vprint(allFiles)
-
-
-
-change_id = "521627"
-cur_rev = "3"
-
-query = "/changes/" + str(change_id) + "/revisions/" + str(cur_rev) + "/review"
-
-#changes = rest.get(query)
-changes = rest.post(query, json={
-    "labels": {
-        "Code-Review": +2
-    }
-})
-
-
-# changes = rest.get("/changes/?q=status:open")
-vprint(changes)
-
-vprint("Done")
-"""
-'''
