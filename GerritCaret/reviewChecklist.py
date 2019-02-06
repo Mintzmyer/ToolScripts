@@ -25,6 +25,7 @@ import time
 
 DEBUG = False
 
+# Verbose print function for debugging
 def vprint(output):
     if DEBUG:
         print(output)
@@ -70,6 +71,12 @@ class RestAPI:
 
     def __init__(self, credentialsFile, gerritUrl):
         # Get Login Authentication information
+        # This expects a file that contains only a Gerrit user's
+        # <Username> <HTTP Password>
+        # Currently, this is found on Gerrit, select:
+        # -> Your username dropdown 
+        # -> Settings
+        # -> HTTP Password
         scriptPath = os.path.dirname(os.path.abspath( __file__ ))
         authFilepath = os.path.expanduser(scriptPath + "/" + credentialsFile)
         if os.path.isfile(authFilepath) == False:
@@ -153,7 +160,7 @@ class GerritDaemon:
 
     # Adds Review Checklist to the commit with given ID
     def addChecklist(self, commitID):
-        result = self.rest.review(commitID, self.review)
+        result = self.rest.review(commitID, "current", self.review)
         vprint(result)
 
 
@@ -169,7 +176,8 @@ connect = RestAPI('.credentials.txt', 'http://gerrit.rosenaviation.com:8080')
 daemon = GerritDaemon(connect, checklist.getReview())
 
 
-# Run daemon to append checklist to new commits
-#daemon.checklistEveryPatch(False)
-#daemon.checklistDaemon()
+# Run daemon to append checklist once to new commits, not each patch
+daemon.checklistEveryPatch(False)
+# Start the daemon
+daemon.checklistDaemon()
 
